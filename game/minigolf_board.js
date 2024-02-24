@@ -135,7 +135,7 @@ class MinigolfBoard {
                     let [u1, u2] = [this._tempLastTouchBuildUpdate, update]
 
                     if (Math.min(u1.index, u2.index) > this.currIndex || u1.index == u2.index) {
-                        this._tempLastTouchBuildUpdate = null
+                        this._tempLastTouchBuildUpdate = update
                         continue // we ignore both events
                     }
 
@@ -146,7 +146,7 @@ class MinigolfBoard {
                     }
 
                     if (u1.index != this.currIndex) {
-                        this._tempLastTouchBuildUpdate = null
+                        this._tempLastTouchBuildUpdate = update
                         continue // we ignore both events
                     }
 

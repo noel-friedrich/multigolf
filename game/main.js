@@ -5,13 +5,33 @@ let gameState = null
 let session = null
 let renderer = null
 
+function clampToSide(screenPos) {
+    const borderRegion = 100
+
+    const newPos = screenPos.copy()
+
+    if (newPos.x <= borderRegion) {
+        newPos.x = 0
+    } else if (newPos.x >= canvas.width - borderRegion) {
+        newPos.x = canvas.width
+    }
+
+    if (newPos.y <= borderRegion) {
+        newPos.y = 0
+    } else if (newPos.y >= canvas.height - borderRegion) {
+        newPos.y = canvas.height
+    }
+
+    return newPos
+}
+
 let tempTouchUpdate = null
 canvas.addEventListener("touchstart", event => {
     if (!gameState) return
 
     tempTouchUpdate = new Update(updateType.TOUCH,
         Date.now(), gameState.deviceIndex, {
-            touchDown: Vector2d.fromTouchEvent(event, canvas),
+            touchDown: clampToSide(Vector2d.fromTouchEvent(event, canvas)),
             touchUp: null,
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight
@@ -21,7 +41,7 @@ canvas.addEventListener("touchstart", event => {
 canvas.addEventListener("touchend", event => {
     if (!gameState || !tempTouchUpdate) return
 
-    tempTouchUpdate.data.touchUp = Vector2d.fromTouchEvent(event, canvas)
+    tempTouchUpdate.data.touchUp = clampToSide(Vector2d.fromTouchEvent(event, canvas))
     session.sendUpdate(gameState, tempTouchUpdate)
     tempTouchUpdate = null
 })
