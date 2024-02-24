@@ -136,8 +136,16 @@ class MinigolfBoard {
 
                     if (Math.min(u1.index, u2.index) > this.currIndex || u1.index == u2.index) {
                         this._tempLastTouchBuildUpdate = update
-                        continue // we ignore both events
+                        continue // we ignoe previous event
                     }
+
+                    if (!((((u1.data.touchDown.x) == 0 || (u1.data.touchDown.x == u1.screenWidth))
+                        || (u1.data.touchDown.y) == 0 || (u1.data.touchDown.y == u1.screenHeight))
+                        && (((u2.data.touchDown.x) == 0 || (u2.data.touchDown.x == u2.screenWidth))
+                        || (u2.data.touchDown.y) == 0 || (u2.data.touchDown.y == u2.screenHeight)))) {
+                            this._tempLastTouchBuildUpdate = null
+                            continue // we ignore both events
+                        }
 
                     if (u1.index > u2.index) {
                         const temp = u1
