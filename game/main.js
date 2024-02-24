@@ -53,4 +53,11 @@ async function main() {
     gameLoop()
 }
 
+
+canvas.onclick = () => {
+    if (document.fullscreenElement != canvas) {
+        canvas.requestFullscreen()
+    }
+}
+
 main()
