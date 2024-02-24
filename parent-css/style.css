@@ -214,7 +214,8 @@ footer > p {
 /* custom */
 
 body {
-    background-image: url("assets/walk.jpeg");
+    background-image: url('assets/background.svg');
+    background-repeat: repeat;
     background-size: 100%;
 }
 
