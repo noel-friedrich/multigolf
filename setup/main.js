@@ -20,7 +20,7 @@ async function startGame() {
 
     // call start game on backend
 
-    location.href = `../game/index.html?g=${encodeURIComponent(gameUid)}`
+    location.href = `../game/index.html?g=${encodeURIComponent(gameUid)}&i=0`
 }
 
 async function main() {
