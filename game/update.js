@@ -1,5 +1,5 @@
 const updateType = {
-    FINGER_MOVE: "finger_move"
+    TOUCH: "touch"
 }
 
 class Update {

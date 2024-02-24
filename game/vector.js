@@ -178,4 +178,29 @@ class Vector2d {
         return [this.x, this.y]
     }
 
+    normalizeToCanvas(canvas) {
+        return new Vector2d(
+            this.x / canvas.width,
+            this.y / canvas.height
+        )
+    }
+
+    static fromTouchEvent(event, element) {
+        let x = 0, y = 0
+
+        if (event.touches && event.touches[0]) {
+            x = event.touches[0].clientX
+            y = event.touches[0].clientY
+        } else if (event.originalEvent && event.originalEvent.changedTouches[0]) {
+            x = event.originalEvent.changedTouches[0].clientX
+            y = event.originalEvent.changedTouches[0].clientY
+        } else if (event.clientX && event.clientY) {
+            x = event.clientX
+            y = event.clientY
+        }
+
+        const rect = element.getBoundingClientRect()
+        return new Vector2d(x - rect.left, y - rect.top)
+    }
+
 }

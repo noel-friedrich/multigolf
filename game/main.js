@@ -4,6 +4,25 @@ const context = canvas.getContext("2d")
 let gameState = null
 let session = null
 
+let tempTouchUpdate = null
+canvas.addEventListener("touchstart", event => {
+    if (!gameState) return
+
+    tempTouchUpdate = new Update(updateType.TOUCH,
+        Date.now(), gameState.deviceIndex, {
+            touchDown: Vector2d.fromTouchEvent(event, canvas),
+            touchUp: null
+        })
+})
+
+canvas.addEventListener("touchend", event => {
+    if (!gameState || !tempTouchUpdate) return
+
+    tempTouchUpdate.touchUp = Vector2d.fromTouchEvent(event, canvas)
+    session.sendUpdate(tempTouchUpdate)
+    tempTouchUpdate = null
+})
+
 function gameLoop() {
     const updates = session.getUpdates()
     gameState.processUpdates(updates)

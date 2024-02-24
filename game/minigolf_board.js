@@ -1,5 +1,11 @@
 class MinigolfBoard {
 
-    // construct board based on backend data  
+    constructor() {
+        this.fieldPath = [] // [...Vector2d]
+    }
+
+    processUpdates(updates) {
+        
+    }
 
 }

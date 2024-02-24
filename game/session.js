@@ -27,6 +27,13 @@ class Session {
         })
     }
 
+    sendUpdate(update) {
+        this.socket.send(JSON.stringify({
+            type: "update",
+            update: update.toObject()
+        }))
+    }
+
     getUpdates() {
         const updates = this.tempUpdates
         this.tempUpdates = []
