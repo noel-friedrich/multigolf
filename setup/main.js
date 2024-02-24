@@ -11,6 +11,7 @@ async function prepareGame() {
 function getQRSource(gameUid) {
     let url = window.location.href.replace("setup", "join")
     url += `?g=${gameUid}`
+    console.log(url)
     const qrApi = "https://chart.apis.google.com/chart?chs=500x500&cht=qr&chld=L&chl="
     return qrApi + encodeURIComponent(url)
 }
@@ -22,9 +23,14 @@ async function startGame() {
         return
     }
 
-    // call start game on backend
+    const response = await fetch(`http://34.253.67.27/start_game/${gameUid}`)
+    const data = await response.json()
 
-    location.href = `../game/index.html?g=${encodeURIComponent(gameUid)}&i=0`
+    if (data.was_already_running) {
+        alert("Game has already started. Cannot start game again!")
+    } else {
+        location.href = `../game/index.html?g=${encodeURIComponent(gameUid)}&i=0`
+    }
 }
 
 async function main() {
