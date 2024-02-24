@@ -5,14 +5,32 @@ class Session {
 
     // (init socket connection)
 
-    static socketAddress = ""
+    socketAddress = "johanns-server"
 
     constructor() {
         this.socket = null
+        this.tempUpdates = null
     }
 
     async login(gameState) {
         this.socket = new WebSocket(this.socketAddress)
+
+        this.socket.send(JSON.stringify({
+            type: "login",
+            deviceIndex: gameState.deviceIndex,
+            gameUid: gameState.gameUid
+        }))
+
+        this.socket.addEventListener("message", event => {
+            const updates = Update.parseUpdateList(event.data)
+            this.tempUpdates.push(...updates)
+        })
+    }
+
+    getUpdates() {
+        const updates = this.tempUpdates
+        this.tempUpdates = []
+        return updates
     }
 
 }
