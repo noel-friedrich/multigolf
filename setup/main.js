@@ -1,4 +1,12 @@
 async function prepareGame() {
+    /* 
+        const response = await fetch("http://83.135.188.29:1520/create_game_session")
+        const data = await response.json()
+        console.log(response, data)
+    */
+
+    // parse gameUid and return it
+
     return "dummy"
 }
 
