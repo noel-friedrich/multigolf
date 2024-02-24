@@ -1,13 +1,11 @@
 const statusText = document.getElementById("status-text")
 
 async function prepareGame() {
-    return Math.random().toString().slice(2)
-
-    const response = await fetch("http://83.135.188.29:1520/create_game_session")
+    const response = await fetch("http://34.253.67.27/create_game_session")
     const data = await response.json()
     console.log(response, data)
 
-    // parse gameUid and return itw
+    return data.game_session_id
 }
 
 function getQRSource(gameUid) {
