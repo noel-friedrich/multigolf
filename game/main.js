@@ -46,13 +46,7 @@ canvas.addEventListener("touchend", event => {
     tempTouchUpdate = null
 })
 
-function updateCanvasSize() {
-    canvas.width = canvas.clientWidth
-    canvas.height = canvas.clientHeight
-}
-
 function gameLoop() {
-    updateCanvasSize()
     const updates = session.getUpdates()
     gameState.processUpdates(updates)
     renderer.render(gameState)

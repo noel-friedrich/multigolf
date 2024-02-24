@@ -183,11 +183,6 @@ class MinigolfBoard {
 
                     this.phones.translate(pp2Point.sub(pp1Point))
 
-                    this.phones.drawDebug("rgba(255, 0, 0, 0.3)")
-                    phoneBox2.drawDebug("rgba(0, 0, 255, 0.3)")
-
-                    this.phones.addPhone(phoneBox2)
-
                     window.phones = this.phones
 
                     context.fillStyle = "black"
