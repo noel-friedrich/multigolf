@@ -4,18 +4,38 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Multigolf | Setup</title>
+        <link rel="stylesheet" href="../parent-css/style.css">
     </head>
 
     <body>
-        <h1>Multigolf Setup</h1>
-        <p>
-            With all other devices, scan the following QR code and put them in their course position.
-            If you've joined with all devices, click on 'Start Game'.
-        </p>
-        <button onclick="startGame()">Start Game</button>
-        <hr>
-        <img id="join-qrcode-img">
+        <header>
+            <div class="left">
+                <img class="logo" src="assets/logo.png">
+                <h1><a href="../index.html">Multigolf</a></h1>
+            </div>
+        </header>
 
-        <script src="main.js"></script>
+        <main>
+            <h1>
+                Almost ready...
+            </h1>
+            <p id="status-text">
+                The game is being created. Get the other phones ready to scan a QR code
+                that is currently being generated...
+            </p>
+            
+            <img id="join-qrcode-img" style="width: 100%;">
+            <button onclick="startGame()">Start Game</button>
+
+            <script src="main.js"></script>
+        </main>
+
+        <footer>
+            Made by the pretty boys club at the <a href="https://hacktrinity.com/">HackTrinity</a> hackathon.
+            <a href="http://www.noel-friedrich.de/blobber/legal/impressum">Impressum.</a>
+            <a href="http://www.noel-friedrich.de/blobber/legal/data-policy">Data-Privacy.</a>
+        </footer>
+
+        <div class="background"></div>
     </body>
 </html>

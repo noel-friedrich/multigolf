@@ -5,12 +5,14 @@ class Session {
 
     // (init socket connection)
 
+    static socketAddress = ""
+
     constructor() {
-        
+        this.socket = null
     }
 
-    async init(gameState) {
-
+    async login(gameState) {
+        this.socket = new WebSocket(this.socketAddress)
     }
 
 }

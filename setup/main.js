@@ -1,13 +1,13 @@
+const statusText = document.getElementById("status-text")
+
 async function prepareGame() {
-    /* 
-        const response = await fetch("http://83.135.188.29:1520/create_game_session")
-        const data = await response.json()
-        console.log(response, data)
-    */
+    return Math.random().toString().slice(2)
 
-    // parse gameUid and return it
+    const response = await fetch("http://83.135.188.29:1520/create_game_session")
+    const data = await response.json()
+    console.log(response, data)
 
-    return "dummy"
+    // parse gameUid and return itw
 }
 
 function getQRSource(gameUid) {
@@ -33,6 +33,11 @@ async function main() {
     gameUid = await prepareGame()
 
     const joinQrcodeImg = document.getElementById("join-qrcode-img")
+
+    joinQrcodeImg.onload = () => {
+        statusText.textContent = "You can now scan the QR code with all participating phones. If everyone has scanned the QR code, press on the 'Start Game' button below. Be aware that you can't add any more phones after this point, so make sure that everyone is connected. Have fun!"
+    }
+
     joinQrcodeImg.src = getQRSource(gameUid)
 }
 

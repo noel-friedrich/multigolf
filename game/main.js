@@ -23,7 +23,7 @@ async function main() {
     gameState = new GameState(gameUid, deviceIndex)
 
     session = new Session()
-    await session.init(gameState)
+    await session.login(gameState)
 
     gameLoop()
 }
