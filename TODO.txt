@@ -1,0 +1,11 @@
+[ ] implement prepareGame() in setup/main.js
+[ ] implement startGame() in setup/main.js
+
+[ ] implement registerDevice() in join/main.js
+[ ] implement hasGameStarted() in join/main.js
+
+[ ] design welcome/index.html
+[ ] design setup/index.html
+[ ] design join/index.html
+
+[ ] think a lot about /game/
