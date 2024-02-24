@@ -99,6 +99,10 @@ class Vector2d {
         return new Vector2d(Math.cos(angle), Math.sin(angle))
     }
 
+    static fromObject(obj) {
+        return new Vector2d(obj.x, obj.y)
+    }
+
     static fromPolar(mag, angle) {
         return new Vector2d(mag * Math.cos(angle), mag * Math.sin(angle))
     }

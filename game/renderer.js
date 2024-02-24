@@ -1,6 +1,7 @@
 class Renderer {
 
     render(gameState) {
+        return
         // Defining the canvas dimensions for fixed phone size
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;

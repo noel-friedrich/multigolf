@@ -15,6 +15,7 @@ class GameState {
     processUpdates(updates) {
         if (updates.length == 0) return
         console.log("processing updates", updates)
+        this.board.processUpdates(this, updates)
     }
 
 }
