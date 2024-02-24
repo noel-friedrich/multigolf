@@ -12,15 +12,17 @@ canvas.addEventListener("touchstart", event => {
     tempTouchUpdate = new Update(updateType.TOUCH,
         Date.now(), gameState.deviceIndex, {
             touchDown: Vector2d.fromTouchEvent(event, canvas),
-            touchUp: null
+            touchUp: null,
+            screenWidth: window.innerWidth,
+            screenHeight: window.innerHeight
         })
 })
 
 canvas.addEventListener("touchend", event => {
     if (!gameState || !tempTouchUpdate) return
 
-    tempTouchUpdate.touchUp = Vector2d.fromTouchEvent(event, canvas)
-    session.sendUpdate(tempTouchUpdate)
+    tempTouchUpdate.data.touchUp = Vector2d.fromTouchEvent(event, canvas)
+    session.sendUpdate(gameState, tempTouchUpdate)
     tempTouchUpdate = null
 })
 

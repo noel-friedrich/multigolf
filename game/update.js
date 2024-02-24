@@ -36,8 +36,7 @@ class Update {
         return Update.fromObject(JSON.parse(jsonString))
     }
 
-    static parseUpdateList(jsonString) {
-        const data = JSON.parse(jsonString)
+    static parseUpdateList(data) {
         if (!Array.isArray(data)) {
             throw new Error("Data format wrong ??")
         }

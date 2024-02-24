@@ -197,6 +197,9 @@ class Vector2d {
         } else if (event.clientX && event.clientY) {
             x = event.clientX
             y = event.clientY
+        } else if (event.changedTouches && event.changedTouches.length > 0) {
+            x = event.changedTouches[0].clientX
+            y = event.changedTouches[0].clientY
         }
 
         const rect = element.getBoundingClientRect()

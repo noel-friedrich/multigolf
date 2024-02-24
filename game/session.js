@@ -5,33 +5,40 @@ class Session {
 
     // (init socket connection)
 
-    socketAddress = "johanns-server"
+    socketAddress = "http://34.253.67.27"
 
     constructor() {
         this.socket = null
-        this.tempUpdates = null
+        this.tempUpdates = []
     }
 
     async login(gameState) {
-        this.socket = new WebSocket(this.socketAddress)
+        this.socket = io(this.socketAddress)
 
-        this.socket.send(JSON.stringify({
-            type: "login",
-            deviceIndex: gameState.deviceIndex,
-            gameUid: gameState.gameUid
-        }))
+        this.socket.on("connected_to_game_session", data => {
+            if (!data.game_session_exists) {
+                location.href = "../welcome/index.html?error&error-type=game_session_doesnt_exist"
+            }
 
-        this.socket.addEventListener("message", event => {
-            const updates = Update.parseUpdateList(event.data)
+            const updates = Update.parseUpdateList(data.updates)
             this.tempUpdates.push(...updates)
+        })
+
+        this.socket.emit("login", {
+            game_session_id: gameState.gameUid
+        })
+
+        this.socket.on("update", updateData => {
+            const update = Update.fromObject(updateData)
+            this.tempUpdates.push(update)
         })
     }
 
-    sendUpdate(update) {
-        this.socket.send(JSON.stringify({
-            type: "update",
+    sendUpdate(gameState, update) {
+        this.socket.emit("update", {
+            game_session_id: gameState.gameUid,
             update: update.toObject()
-        }))
+        })
     }
 
     getUpdates() {
