@@ -1,6 +1,4 @@
 async function prepareGame() {
-    // prepare game with backend api
-    // then return gameUid
     return "dummy"
 }
 
