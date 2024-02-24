@@ -1,5 +1,5 @@
 async function registerDevice(gameUid) {
-    const response = await fetch(`http://34.253.67.27/join_game_session/${gameUid}`)
+    const response = await fetch(`https://34.253.67.27/join_game_session/${gameUid}`)
     const data = await response.json()
     console.log(response, data)
 
@@ -13,7 +13,7 @@ async function registerDevice(gameUid) {
 }
 
 async function gameHasStarted(gameUid) {
-    const response = await fetch(`http://34.253.67.27/game_started/${gameUid}`)
+    const response = await fetch(`https://34.253.67.27/game_started/${gameUid}`)
     const data = await response.json()
     return data.game_started
 }

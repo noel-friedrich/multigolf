@@ -23,7 +23,7 @@ async function startGame() {
         return
     }
 
-    const response = await fetch(`http://34.253.67.27/start_game/${gameUid}`)
+    const response = await fetch(`https://34.253.67.27/start_game/${gameUid}`)
     const data = await response.json()
 
     if (data.was_already_running) {
