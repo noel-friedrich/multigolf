@@ -3,6 +3,7 @@ const context = canvas.getContext("2d")
 
 let gameState = null
 let session = null
+let renderer = null
 
 let tempTouchUpdate = null
 canvas.addEventListener("touchstart", event => {
@@ -26,6 +27,7 @@ canvas.addEventListener("touchend", event => {
 function gameLoop() {
     const updates = session.getUpdates()
     gameState.processUpdates(updates)
+    renderer.render(gameState)
 
     window.requestAnimationFrame(gameLoop)
 }
@@ -43,6 +45,8 @@ async function main() {
 
     session = new Session()
     await session.login(gameState)
+
+    renderer = new Renderer()
 
     gameLoop()
 }
