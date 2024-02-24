@@ -1,7 +1,7 @@
 const statusText = document.getElementById("status-text")
 
 async function prepareGame() {
-    const response = await fetch("http://34.253.67.27/create_game_session")
+    const response = await fetch("https://34.253.67.27/create_game_session")
     const data = await response.json()
     console.log(response, data)
 
