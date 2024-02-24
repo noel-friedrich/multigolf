@@ -139,13 +139,17 @@ class MinigolfBoard {
                         continue // we ignoe previous event
                     }
 
-                    if (!((((u1.data.touchDown.x) == 0 || (u1.data.touchDown.x == u1.screenWidth))
-                        || (u1.data.touchDown.y) == 0 || (u1.data.touchDown.y == u1.screenHeight))
-                        && (((u2.data.touchDown.x) == 0 || (u2.data.touchDown.x == u2.screenWidth))
-                        || (u2.data.touchDown.y) == 0 || (u2.data.touchDown.y == u2.screenHeight)))) {
-                            this._tempLastTouchBuildUpdate = null
-                            continue // we ignore both events
-                        }
+                    const u1IsOnSide = (((u1.data.touchDown.x == 0) || (u1.data.touchDown.x == u1.data.screenWidth))
+                        || ((u1.data.touchDown.y == 0) || (u1.data.touchDown.y == u1.data.screenHeight)))
+
+                    const u2IsOnSide = (((u2.data.touchDown.x == 0) || (u2.data.touchDown.x == u2.data.screenWidth))
+                        || ((u2.data.touchDown.y == 0) || (u2.data.touchDown.y == u2.data.screenHeight)))
+
+                    if (!u1IsOnSide || !u2IsOnSide) {
+                        console.log("los", u1, u2, !u1IsOnSide, !u2IsOnSide)
+                        this._tempLastTouchBuildUpdate = null
+                        continue // we ignore both events
+                    }
 
                     if (u1.index > u2.index) {
                         const temp = u1
@@ -187,6 +191,8 @@ class MinigolfBoard {
 
                     context.fillStyle = "black"
                     context.fillRect(canvas.width / 2 - 5, canvas.height / 2 - 5, 10, 10)
+
+                    this.phones.addPhone(phoneBox2)
 
                     this._tempLastTouchBuildUpdate = null
                 }
