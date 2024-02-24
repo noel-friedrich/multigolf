@@ -112,10 +112,13 @@ class MinigolfBoard {
 
     constructor() {
         this.phones = new PhoneBoxCollection()
-        this.currIndex = 0
         this.previousFieldPaths = []
 
         this._tempLastTouchBuildUpdate = null
+    }
+
+    get currIndex() {
+        return Math.max(this.phones.length - 1, 0)
     }
 
     processUpdates(gameState, updates) {
