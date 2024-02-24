@@ -1,7 +1,7 @@
 const statusText = document.getElementById("status-text")
 
 async function prepareGame() {
-    const response = await fetch("https://34.253.67.27/create_game_session")
+    const response = await fetch("https://multigolf.twostone.xyz/create_game_session")
     const data = await response.json()
     console.log(response, data)
 
@@ -12,7 +12,7 @@ function getQRSource(gameUid) {
     let url = window.location.href.replace("setup", "join")
     url += `?g=${gameUid}`
     console.log(url)
-    const qrApi = "https://chart.apis.google.com/chart?chs=500x500&cht=qr&chld=L&chl="
+    const qrApi = "http://chart.apis.google.com/chart?chs=500x500&cht=qr&chld=L&chl="
     return qrApi + encodeURIComponent(url)
 }
 
@@ -23,7 +23,7 @@ async function startGame() {
         return
     }
 
-    const response = await fetch(`https://34.253.67.27/start_game/${gameUid}`)
+    const response = await fetch(`https://multigolf.twostone.xyz/start_game/${gameUid}`)
     const data = await response.json()
 
     if (data.was_already_running) {

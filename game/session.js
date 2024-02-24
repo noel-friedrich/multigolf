@@ -5,7 +5,7 @@ class Session {
 
     // (init socket connection)
 
-    socketAddress = "https://34.253.67.27"
+    socketAddress = "https://multigolf.twostone.xyz"
 
     constructor() {
         this.socket = null
