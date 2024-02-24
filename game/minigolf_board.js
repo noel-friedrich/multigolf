@@ -175,9 +175,6 @@ class MinigolfBoard {
 
                     this.phones.translate(pp2Point.sub(pp1Point))
 
-                    canvas.width = canvas.clientWidth
-                    canvas.height = canvas.clientHeight
-
                     this.phones.drawDebug("rgba(255, 0, 0, 0.3)")
                     phoneBox2.drawDebug("rgba(0, 0, 255, 0.3)")
 
