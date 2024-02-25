@@ -226,9 +226,9 @@ class MinigolfBoard {
 
         this.startPos = null
         this.holePos = null
-        
-        this.ballPos = null
-        this.ballVel = null
+
+        this.balls = [] // [...Ball]
+        this.activeBallIndex = 0
 
         this.currPhysicsTime = null
         this.physicsUpdates = []

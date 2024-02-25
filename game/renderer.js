@@ -53,11 +53,11 @@ class Renderer {
             const startScreenPos = gameState.board.boardPosToScreenPos(gameState.board.startPos)
             
             context.beginPath()
-            context.fillStyle = "limegreen"
-            context.arc(startScreenPos.x, startScreenPos.y, this.sizingFactor * 0.03, 0, 2 * Math.PI, false)
+            context.fillStyle = "#ccc"
+            context.arc(startScreenPos.x, startScreenPos.y, this.sizingFactor * 0.06, 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
-            context.lineWidth = 3
+            context.lineWidth = 2
 
             context.fill()   
             context.stroke()
