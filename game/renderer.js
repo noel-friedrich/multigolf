@@ -78,13 +78,36 @@ class Renderer {
             
             context.beginPath()
             context.fillStyle = ball.color
-            context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius * ball.radiusScalar, 0, 2 * Math.PI, false)
+            context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius * Math.max(ball.radiusScalar, 0), 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
             context.lineWidth = 5
 
             context.fill()   
             context.stroke()
+
+            function easeOutBounce(x) {
+                const n1 = 7.5625;
+                const d1 = 2.75;
+                
+                if (x < 1 / d1) {
+                    return n1 * x * x;
+                } else if (x < 2 / d1) {
+                    return n1 * (x -= 1.5 / d1) * x + 0.75;
+                } else if (x < 2.5 / d1) {
+                    return n1 * (x -= 2.25 / d1) * x + 0.9375;
+                } else {
+                    return n1 * (x -= 2.625 / d1) * x + 0.984375;
+                }
+            }
+
+            if (ball.radiusScalar < 0) {
+                context.textBaseline = "middle"
+                context.textAlign = "center"
+                context.fillStyle = "white"
+                context.font = `${easeOutBounce(Math.abs(ball.radiusScalar)) * this.sizingFactor}px Arial`
+                context.fillText(ball.kicks.toString(), ballScreenPos.x, ballScreenPos.y)
+            }
         }
     }
 
