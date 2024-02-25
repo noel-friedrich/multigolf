@@ -172,6 +172,7 @@ class Ball {
         this.color = "white"
         this.radiusScalar = 1
         this.inHole = false
+        this.kicks = 0
 
         this.dampening = 0.95
         this.kickFactor = 100
@@ -183,6 +184,7 @@ class Ball {
 
     applyKick(angle, strength) {
         this.vel.iadd(Vector2d.fromAngle(angle).scale(strength * this.kickFactor))
+        this.kicks++
     }
 
 }
@@ -327,13 +329,13 @@ class MinigolfBoard {
             if (ball.inHole) {
                 ball.pos = this.holePos.copy()
                 ball.radiusScalar -= 0.01
-                if (ball.radiusScalar < 0) {
-                    ball.radiusScalar = 0
+                if (ball.radiusScalar < -1) {
+                    ball.radiusScalar = -1
                 }
             }
         }
 
-        this.balls = this.balls.filter(b => b.radiusScalar > 0)
+        this.balls = this.balls.filter(b => b.radiusScalar > -1)
     }
 
     startGame(timestamp) {
