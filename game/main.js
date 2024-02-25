@@ -116,7 +116,7 @@ function gameLoop() {
 
     if (gameState.phase == gamePhase.PLAYING) {
         gameState.board.updatePhysics()
-        sendAccelerometerUpdate(gameState);
+        //sendAccelerometerUpdate(gameState);
     }
 
     renderer.render(gameState)

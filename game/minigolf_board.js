@@ -238,7 +238,7 @@ class MinigolfBoard {
 
         this.physicsTickStep = 30
 
-        this.accelerometer = new AccelReader()
+        //this.accelerometer = new AccelReader()
     }
 
     get activeBall() {
