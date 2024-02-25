@@ -185,8 +185,6 @@ class MinigolfBoard {
                         this.connectionScreenPos = this.connectionScreenPos.filter(c => {
                             return !(Math.max(c.targetIndex, c.deviceIndex) > u1.index)
                         })
-
-                        continue
                     }
 
                     const delta1 = Vector2d.fromObject(u1.data.touchUp).sub(Vector2d.fromObject(u1.data.touchDown))
