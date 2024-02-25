@@ -49,25 +49,6 @@ class AccelReader {
         return this.changed
     }
 
-    handleReading() {
-        if (!this.isEnabled) return
-        const currTime = Date.now()
-        if (currTime - this.lastAccelData.timeStamp() < 500) {
-            return
-        }
-
-        const current_accel = AccelData.fromAccelerometer(this.accel)
-        this.debugPrint()
-        console.log(current_accel)
-        if (!this.didChange(this.lastAccelData, current_accel)) {
-            this.changed = false
-            return
-        }
-        this.changed = true
-        this.changed = true
-        this.lastAccelData = current_accel
-    }
-
     debugPrint() {
         this.accel.addEventListener("reading", () => {
             console.log(`Acceleration along the X-axis ${this.accel.x}`)
@@ -83,6 +64,19 @@ class AccelReader {
     }
 
     pullAccelerometer() {
+
+        const currTime = Date.now()
+        if (currTime - this.lastAccelData.timeStamp() < 500) {
+            return
+        }
+
+        const current_accel = AccelData.fromAccelerometer(this.accel)
+        if (!this.didChange(this.lastAccelData, current_accel)) {
+            this.changed = false
+            return
+        }
+        this.changed = true
+        this.lastAccelData = current_accel
         return this.lastAccelData
     }
 }
