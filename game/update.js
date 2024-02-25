@@ -13,7 +13,7 @@ class Update {
         this.index = index // phone index
         this.data = data // generic {} containing data (e.g. finger positions)
                          // data needs to be seriazable!!
-        this.uid = uid ?? Math.random().slice(2)
+        this.uid = uid ?? Math.random().toString().slice(2)
     }
 
     toObject() {
@@ -33,7 +33,7 @@ class Update {
     static fromObject(obj) {
         return new Update(
             obj.type, obj.timestamp,
-            obj.index, obj.data
+            obj.index, obj.data, obj.uid
         )
     }
 

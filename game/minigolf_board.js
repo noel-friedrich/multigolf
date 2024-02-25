@@ -320,7 +320,13 @@ class MinigolfBoard {
 
     startGame(timestamp) {
         console.log("Starting game", timestamp)
-        this.balls.push(new Ball())
+        const ball = new Ball()
+        this.balls.push(ball)
+        
+        if (this.startPos) {
+            ball.pos = this.startPos.copy()
+        }
+
         this.currPhysicsTime = timestamp
     }
 

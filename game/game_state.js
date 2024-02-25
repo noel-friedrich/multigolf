@@ -12,14 +12,17 @@ class GameState {
         this.deviceIndex = deviceIndex
         this.board = new MinigolfBoard()
         this.phase = gamePhase.BUILDING
-        this.allUpdates = []
+        this.updateUids = new Set()
     }
 
     processUpdates(updates) {
+        updates = updates.filter(u => !this.updateUids.has(u.uid))
         if (updates.length == 0) return
         console.log("processing updates", updates)
         this.board.processUpdates(this, updates)
-        this.allUpdates.push(...updates)
+        for (let update of updates) {
+            this.updateUids.add(update.uid)
+        }
     }
 
 }
