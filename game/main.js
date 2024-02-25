@@ -82,9 +82,12 @@ async function main() {
 
     renderer = new Renderer()
 
+    if (deviceIndex == 0) {
+        MenuGui.show()
+    }
+
     gameLoop()
 }
-
 
 canvas.onclick = () => {
     if (document.fullscreenElement != canvas) {

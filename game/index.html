@@ -6,10 +6,47 @@
         <title>Multigolf | Game</title>
         <link rel="icon" type = "image/svg + xml" href="../assets/logo.svg">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../parent-css/style.css">
     </head>
 
     <body>
         <canvas id="fullscreen-canvas"></canvas>
+
+        <button id="open-menu" style="display: none;" onclick="MenuGui.show()">+</button>
+
+        <main style="z-index: 999; display: none;" id="menu-container">
+            <div data-section="layouting">
+                <h1>Course Building Time!</h1>
+                <p>
+                    It's time to design your course. Layout all connected phones on your table to form
+                    your very own minigolf course. 
+                </p>
+                <img src="../assets/building.gif" style="width: 100%;">
+                <p>
+                    To mark a connection, use two fingers and slide across the edge on both devices.
+                    If successful, you'll see a blue line appearing indicating the connection. You must
+                    draw the connections one after the other (0 to 1, then 1 to 2, etc).
+                </p>
+                <button onclick="MenuGui.hide()">Begin Layouting</button>
+                <button onclick="MenuGui.finishLayouting()">I'm finished!</button>
+            </div>
+            <div data-section="place-start">
+                <h1>Course Building Time!</h1>
+                <p>
+                    It's time to place the start spot. Simply click anywhere on the board to place it.
+                </p>
+                <button onclick="MenuGui.hide()">Close Menu</button>
+                <button onclick="MenuGui.finishStart()">I've placed it!</button>
+            </div>
+            <div data-section="place-hole">
+                <h1>Course Building Time!</h1>
+                <p>
+                    It's time to place the hole. Simply click anywhere on the board to place it.
+                </p>
+                <button onclick="MenuGui.hide()">Close Menu</button>
+                <button onclick="MenuGui.finishHole()">I've placed it!</button>
+            </div>
+        </main>
 
         <script src="https://cdn.socket.io/3.0.0/socket.io.min.js"></script>
         <script src="vector.js"></script>
@@ -18,6 +55,7 @@
         <script src="renderer.js"></script>
         <script src="session.js"></script>
         <script src="update.js"></script>
+        <script src="menu-gui.js"></script>
         <script src="main.js"></script>
     </body>
 </html>

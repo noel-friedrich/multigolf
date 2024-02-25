@@ -1,6 +1,8 @@
 const gamePhase = {
     BUILDING: 0,
-    PLAYING: 1
+    PLACING_START: 1,
+    PLACING_HOLE: 2,
+    PLAYING: 3
 }
 
 class GameState {

@@ -1,9 +1,11 @@
 class Renderer {
 
-    renderBuilding(gameState) {
-        const sizingFactor = Math.min(canvas.width, canvas.height)
+    get sizingFactor() {
+        return Math.min(canvas.width, canvas.height)
+    }
 
-        context.font = `${sizingFactor * 0.4}px monospace`
+    renderBuilding(gameState) {
+        context.font = `${this.sizingFactor * 0.4}px monospace`
         context.fillStyle = "white"
 
         context.textBaseline = "middle"
@@ -15,7 +17,7 @@ class Renderer {
 
             context.beginPath()
             context.fillStyle = "rgba(0, 0, 255, 0.5)"
-            context.arc(touchBlobPos.x, touchBlobPos.y, sizingFactor * 0.1, 0, 2 * Math.PI, false)
+            context.arc(touchBlobPos.x, touchBlobPos.y, this.sizingFactor * 0.1, 0, 2 * Math.PI, false)
             context.fill()
         }
 
@@ -25,7 +27,7 @@ class Renderer {
             }
 
             context.beginPath()
-            context.lineWidth = sizingFactor * 0.1
+            context.lineWidth = this.sizingFactor * 0.1
             context.moveTo(connection.start.x, connection.start.y)
             context.lineTo(connection.end.x, connection.end.y)
             context.strokeStyle = "blue"
@@ -33,7 +35,35 @@ class Renderer {
             context.stroke()
         }
 
-        gameState.board.phones.drawDebug("blue")
+        if (new URLSearchParams(location.search).has("debug")) {
+            gameState.board.phones.drawDebug("blue")
+        }
+    }
+
+    renderBoard(gameState) {
+        if (gameState.board.startPos) {
+            const startScreenPos = gameState.board.boardPosToScreenPos(gameState.board.startPos)
+            
+            context.beginPath()
+            context.fillStyle = "white"
+            context.arc(startScreenPos.x, startScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+
+            context.strokeStyle = "black"
+            context.lineWidth = 5
+
+            context.fill()   
+            context.stroke()
+        }
+
+        if (gameState.board.holePos) {
+            const holeScreenPos = gameState.board.boardPosToScreenPos(gameState.board.holePos)
+            
+            context.beginPath()
+            context.fillStyle = "black"
+            context.arc(holeScreenPos.x, holeScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+            window.holeScreenPos = holeScreenPos
+            context.fill()
+        }
     }
 
     render(gameState) {
@@ -43,6 +73,11 @@ class Renderer {
 
         if (gameState.phase == gamePhase.BUILDING) {
             this.renderBuilding(gameState)
+        } else if (gameState.phase == gamePhase.PLACING_START || gameState.phase == gamePhase.PLACING_HOLE) {
+            this.renderBuilding(gameState)
+            this.renderBoard(gameState)
+        } else if (gameState.phase == gamePhase.PLAYING) {
+            this.renderBoard(gameState)
         }
     }
 }

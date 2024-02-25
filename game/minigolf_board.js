@@ -20,6 +20,16 @@ class PhoneBox {
         )
     }
 
+    screenPosToBoardPos(screenPos) {
+        let pos = screenPos.rotate(this.angle)
+        return this.origin.add(pos.scale(this.scalar))
+    }
+
+    boardPosToScreenPos(boardPos) {
+        let pos = boardPos.sub(this.origin).scale(1 / this.scalar)
+        return pos.rotate(-this.angle)
+    }
+
     static fromUpdate(update) {
         return new PhoneBox([
             new Vector2d(0, 0),
@@ -126,11 +136,26 @@ class MinigolfBoard {
         return Math.abs(u1.timestamp - u2.timestamp) < 5000 // TODO: make this 500 again please
     }
 
+    isSignificantDistance(distance) {
+        return distance > 20
+    }
+
     constructor() {
         this.previousPhones = [new PhoneBoxCollection()]
 
         this._tempLastTouchBuildUpdate = null
         this.connectionScreenPos = []
+
+        this.startPos = null
+        this.holePos = null
+        
+        this.ballPos = null
+        this.ballVel = null
+    }
+
+    startGame() {
+        this.ballPos = this.startPos.copy()
+        this.ballVel = new Vector2d(0, 0)
     }
 
     get phones() {
@@ -141,8 +166,35 @@ class MinigolfBoard {
         return Math.max(this.phones.length - 1, 0)
     }
 
+    screenPosToBoardPos(pos) {
+        return this.phones.phones[gameState.deviceIndex].screenPosToBoardPos(pos)
+    }
+
+    boardPosToScreenPos(pos) {
+        return this.phones.phones[gameState.deviceIndex].boardPosToScreenPos(pos)
+    }
+
     processUpdates(gameState, updates) {
         for (const update of updates) {
+            if (update.type == updateType.PHASE) {
+                gameState.phase = update.data.phase
+                MenuGui.update()
+            }
+
+            if (update.type == updateType.TOUCH && ([gamePhase.PLACING_START, gamePhase.PLACING_HOLE].includes(gameState.phase))) {
+                if (this.isSignificantDistance(
+                    Vector2d.fromObject(update.data.touchUp).sub(Vector2d.fromObject(update.data.touchDown)).length
+                )) {
+                    continue
+                }
+
+                if (gameState.phase == gamePhase.PLACING_START) {
+                    this.startPos = this.phones.phones[update.index].screenPosToBoardPos(Vector2d.fromObject(update.data.touchDown))
+                } else if (gameState.phase == gamePhase.PLACING_HOLE) {
+                    this.holePos = this.phones.phones[update.index].screenPosToBoardPos(Vector2d.fromObject(update.data.touchDown))
+                }
+            }
+
             if (update.type == updateType.TOUCH && gameState.phase == gamePhase.BUILDING) {
                 if (!this._tempLastTouchBuildUpdate) {
                     this._tempLastTouchBuildUpdate = update

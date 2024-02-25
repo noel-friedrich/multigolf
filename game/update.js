@@ -1,5 +1,6 @@
 const updateType = {
-    TOUCH: "touch"
+    TOUCH: "touch",
+    PHASE: "phase"
 }
 
 class Update {
