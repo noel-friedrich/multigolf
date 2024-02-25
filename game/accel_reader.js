@@ -5,6 +5,10 @@ class AccelData {
         this._timeStamp = timeStamp
     }
 
+    static fromValues(x,y,z) {
+        return new AccelData(x,y,z, Date.now())
+    }
+
     static fromAccelerometer(accel) {
         return new AccelData(accel.x, accel.y, accel.z, Date.now())
     }
@@ -52,6 +56,8 @@ class AccelReader {
         }
 
         const current_accel = AccelData.fromAccelerometer(this.accel)
+        this.debugPrint()
+        console.log(current_accel)
         if (!this.didChange(this.lastAccelData, current_accel)) {
             this.changed = false
             return
