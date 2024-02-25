@@ -260,7 +260,7 @@ class MinigolfBoard {
 
         if (this.isBallMoving()) {
             this.ballPos.iadd(this.ballVel)
-            this.ballVel.iscale(0.94)
+            this.ballVel.iscale(0.9)
             if (this.ballVel.length < 0.01) {
                 this.ballVel = new Vector2d(0, 0)
             }
