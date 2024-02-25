@@ -83,7 +83,7 @@ canvas.addEventListener("touchend", event => {
 
 function sendAccelerometerUpdate(gameState) {
     const accel = gameState.board.accelerometer.pullAccelerometer()
-    if (!accel.hasChanged()) {
+    if (!accel.hasChanged) {
         return
     }
     session.sendUpdate(gameState, new Update(
