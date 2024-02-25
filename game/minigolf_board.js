@@ -269,7 +269,7 @@ class MinigolfBoard {
         if (!this.isBoardPosInBoard(this.ballPos)) {
             let closestWall = null
             let smallestDistance = Infinity
-            
+
             for (let phone of this.phones.phones) {
                 for (let [p1, p2] of phone.walls) {
                     const distanceToWall = this._distanceToWall(p1, p2, this.ballPos)
@@ -339,10 +339,6 @@ class MinigolfBoard {
             }
 
             if (update.type == updateType.TOUCH && gameState.phase == gamePhase.BUILDING) {
-                if (this.phones.length == 0) {
-                    this.previousPhones.push(this.phones.addPhone(PhoneBox.fromUpdate(update)))
-                }
-
                 if (!this._tempLastTouchBuildUpdate) {
                     this._tempLastTouchBuildUpdate = update
                 } else {
