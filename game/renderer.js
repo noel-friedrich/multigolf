@@ -97,7 +97,8 @@ class Renderer {
         dir.iscale(0.8 + Math.sin(Date.now() * 0.01) * 0.1)
 
         ballShootStrength = dir.length / (this.sizingFactor * 0.5)
-        ballShootAngle = dir.angle
+
+        ballShootAngle = dir.angle + gameState.board.phones.phones[gameState.deviceIndex].angle
 
         context.strokeStyle = "rgba(0, 0, 0, 0.5)"
         context.lineWidth = this.sizingFactor * 0.03
