@@ -38,6 +38,7 @@ class AccelReader {
             this.accel.addEventListener("reading", this.handleReading)
             this.lastAccelData = AccelData.fromAccelerometer(this.accel)
             this.isEnabled = true
+            this.accel.start()
         } catch (_) {
             this.accel = null
         }
