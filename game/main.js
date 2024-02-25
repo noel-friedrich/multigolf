@@ -91,6 +91,7 @@ function sendAccelerometerUpdate(gameState) {
             accelerometer: accel
         }
     ))
+    console.log(accel)
 }
 
 function gameLoop() {
