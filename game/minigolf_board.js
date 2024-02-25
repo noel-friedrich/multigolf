@@ -186,7 +186,7 @@ class Ball {
 
 class MinigolfBoard {
 
-    
+
 
     _distanceToWall(p1, p2, point) {
         let p2toP1 = p2.sub(p1)
@@ -208,7 +208,7 @@ class MinigolfBoard {
         const wallNormal = new Vector2d(-wallDir.y, wallDir.x)
         const angleDifference = dir.angle - wallNormal.angle
         return dir.rotate(-angleDifference * 2).scale(-1)
-    }   
+    }
 
     isApproximatelySameTime(u1, u2) {
         return Math.abs(u1.timestamp - u2.timestamp) < 5000 // TODO: make this 500 again please
@@ -226,16 +226,18 @@ class MinigolfBoard {
 
         this.startPos = null
         this.holePos = null
-
-        this.balls = [] // [...Ball]
-        this.activeBallIndex = 0
+        
+        this.ballPos = null
+        this.ballVel = null
 
         this.currPhysicsTime = null
         this.physicsUpdates = []
 
         this.physicsTickStep = 30
+
+        this.accelerometer = new AccelReader()
     }
-    
+
     get activeBall() {
         return this.balls[this.activeBallIndex % this.balls.length]
     }
@@ -285,12 +287,12 @@ class MinigolfBoard {
                     ball.vel = new Vector2d(0, 0)
                 }
             }
-    
+
             if (!this.isBoardPosInBoard(ball.pos)) {
                 let closestWall = null
                 let closestPhone = null
                 let smallestDistance = Infinity
-    
+
                 for (let phone of this.phones.phones) {
                     for (let [p1, p2] of phone.walls) {
                         const distanceToWall = this._distanceToWall(p1, p2, ball.pos)
@@ -301,12 +303,12 @@ class MinigolfBoard {
                         }
                     }
                 }
-    
+
                 const [p1, p2] = closestWall
                 ball.pos.isub(ball.vel)
                 ball.vel = this._reflectAtWall(p1, p2, ball.vel)
                 ball.pos.iadd(ball.vel)
-                
+
                 if (closestPhone.deviceIndex == gameState.deviceIndex) {
                     if (Math.abs(timestamp - Date.now()) < 50) {
                         navigator.vibrate([100])
