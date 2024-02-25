@@ -266,6 +266,7 @@ class MinigolfBoard {
             }
         }
 
+        return
         if (!this.isBoardPosInBoard(this.ballPos)) {
             for (let phone of this.phones.phones) {
                 let closestWall = null
