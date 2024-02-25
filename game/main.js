@@ -81,12 +81,25 @@ canvas.addEventListener("touchend", event => {
     }
 })
 
+function sendAccelerometerUpdate(gameState) {
+    const accel = gameState.board.accelerometer.pullAccelerometer()
+    if (!accel.hasChanged()) {
+        return
+    }
+    session.sendUpdate(gameState, new Update(
+        updateType.SLOPE, Date.now(), gameState.deviceIndex, {
+            accelerometer: accel
+        }
+    ))
+}
+
 function gameLoop() {
     const updates = session.getUpdates()
     gameState.processUpdates(updates)
 
     if (gameState.phase == gamePhase.PLAYING) {
         gameState.board.updatePhysics()
+        sendAccelerometerUpdate(gameState);
     }
 
     renderer.render(gameState)
