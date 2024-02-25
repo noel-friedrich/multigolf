@@ -77,7 +77,7 @@ class Renderer {
             const ballScreenPos = gameState.board.boardPosToScreenPos(ball.pos)
             
             context.beginPath()
-            context.fillStyle = "white"
+            context.fillStyle = ball.color
             context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius, 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
