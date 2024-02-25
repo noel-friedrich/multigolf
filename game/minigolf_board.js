@@ -170,6 +170,8 @@ class Ball {
         this.pos = new Vector2d(0, 0)
         this.vel = new Vector2d(0, 0)
         this.color = "white"
+        this.radiusScalar = 1
+        this.inHole = false
 
         this.dampening = 0.95
         this.kickFactor = 100
@@ -186,8 +188,6 @@ class Ball {
 }
 
 class MinigolfBoard {
-
-
 
     _distanceToWall(p1, p2, point) {
         let p2toP1 = p2.sub(p1)
@@ -316,7 +316,23 @@ class MinigolfBoard {
                     }
                 }
             }
+            
+            if (this.holePos && !ball.inHole) {
+                const distance = this.holePos.distance(ball.pos)
+                if (distance <= renderer.ballRadius * 1.5) {
+                    ball.inHole = true
+                }
+            }
+
+            if (ball.inHole) {
+                ball.radiusScalar -= 0.01
+                if (ball.radiusScalar < 0) {
+                    ball.radiusScalar = 0
+                }
+            }
         }
+
+        balls = balls.filter(b => b.radiusScalar > 0)
     }
 
     startGame(timestamp) {
