@@ -175,22 +175,16 @@ class MinigolfBoard {
                     const phoneBox2 = PhoneBox.fromUpdate(u2)
 
                     // adjust scaling
-                    phoneBox2.scale(delta1.length / delta2.length)
-                    pp2Point.scale(delta1.length / delta1.length)
+                    this.phones.scale(delta2.length / delta1.length)
+                    pp1Point.iscale(delta2.length / delta1.length)
 
-                    const angle1 = Math.round((-delta1.angle + Math.PI / 2) / (Math.PI / 2)) * (Math.PI / 2)
-                    const angle2 = Math.round((-delta2.angle + Math.PI / 2) / (Math.PI / 2)) * (Math.PI / 2)
+                    let angle1 = delta2.angle - delta1.angle
+                    angle1 = Math.round(angle1 / (Math.PI / 2)) * (Math.PI / 2)
 
                     this.phones.rotate(angle1)
-                    phoneBox2.rotate(angle2)
                     pp1Point.irotate(angle1)
 
                     this.phones.translate(pp2Point.sub(pp1Point))
-
-                    window.phones = this.phones
-
-                    context.fillStyle = "black"
-                    context.fillRect(canvas.width / 2 - 5, canvas.height / 2 - 5, 10, 10)
 
                     this.phones.addPhone(phoneBox2)
 
