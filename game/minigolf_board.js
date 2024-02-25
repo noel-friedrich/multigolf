@@ -288,7 +288,7 @@ class MinigolfBoard {
             this.ballPos.iadd(this.ballVel)
             
             if (closestPhone.deviceIndex == gameState.deviceIndex) {
-                navigator.vibrate([300])
+                navigator.vibrate([150])
             }
         }
     }
