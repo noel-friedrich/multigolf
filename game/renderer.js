@@ -78,7 +78,7 @@ class Renderer {
             
             context.beginPath()
             context.fillStyle = ball.color
-            context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius, 0, 2 * Math.PI, false)
+            context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius * ball.radiusScalar, 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
             context.lineWidth = 5

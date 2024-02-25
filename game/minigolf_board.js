@@ -267,7 +267,7 @@ class MinigolfBoard {
     }
 
     applyPhysicsUpdate(update) {
-        if (update.type == updateType.KICK_BALL) {
+        if (update.type == updateType.KICK_BALL && this.activeBall) {
             this.activeBall.applyKick(update.data.angle, update.data.strength)
             this.activeBallIndex++
         }
@@ -325,6 +325,7 @@ class MinigolfBoard {
             }
 
             if (ball.inHole) {
+                ball.pos = this.holePos.copy()
                 ball.radiusScalar -= 0.01
                 if (ball.radiusScalar < 0) {
                     ball.radiusScalar = 0
@@ -332,7 +333,7 @@ class MinigolfBoard {
             }
         }
 
-        balls = balls.filter(b => b.radiusScalar > 0)
+        this.balls = this.balls.filter(b => b.radiusScalar > 0)
     }
 
     startGame(timestamp) {
