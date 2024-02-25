@@ -164,70 +164,29 @@ class PhoneBoxCollection {
 
 }
 
-class MinigolfBoard {
-
-    isApproximatelySameTime(u1, u2) {
-        return Math.abs(u1.timestamp - u2.timestamp) < 5000 // TODO: make this 500 again please
-    }
-
-    isSignificantDistance(distance) {
-        return distance > 20
-    }
+class Ball {
 
     constructor() {
-        this.previousPhones = [new PhoneBoxCollection()]
+        this.pos = new Vector2d(0, 0)
+        this.vel = new Vector2d(0, 0)
 
-        this._tempLastTouchBuildUpdate = null
-        this.connectionScreenPos = []
-
-        this.startPos = null
-        this.holePos = null
-        
-        this.ballPos = null
-        this.ballVel = null
-
-        this.currPhysicsTime = null
-        this.physicsUpdates = []
-
-        this.physicsTickStep = 30
+        this.dampening = 0.9
+        this.kickFactor = 100
     }
 
-    addPhysicsUpdate(update) {
-        this.physicsUpdates.push(update)
+    isMoving() {
+        return this.vel.length > 0
     }
 
-    updatePhysics() {
-        const currTimestamp = Date.now()
-        let count = 0
-        while (this.currPhysicsTime < currTimestamp) {
-            this.physicsStep(this.currPhysicsTime)
-            count++
-            this.currPhysicsTime += this.physicsTickStep
-
-            if (count > 1000) {
-                // don't do too many at a time to avoid lag
-                break
-            }
-        }
+    applyKick(angle, strength) {
+        this.vel.iadd(Vector2d.fromAngle(angle).scale(strength * this.kickFactor))
     }
 
-    isBallMoving() {
-        return this.ballVel && this.ballVel.length > 0
-    }
+}
 
-    isBoardPosInBoard(pos) {
-        return this.phones.containsPoint(pos)
-    }
+class MinigolfBoard {
 
-    applyPhysicsUpdate(update) {
-        if (update.type == updateType.KICK_BALL) {
-            if (this.isBallMoving()) {
-                return
-            }
-
-            this.ballVel = Vector2d.fromAngle(update.data.angle).scale(update.data.strength * 100)
-        }
-    }
+    
 
     _distanceToWall(p1, p2, point) {
         let p2toP1 = p2.sub(p1)
@@ -249,6 +208,66 @@ class MinigolfBoard {
         const wallNormal = new Vector2d(-wallDir.y, wallDir.x)
         const angleDifference = dir.angle - wallNormal.angle
         return dir.rotate(-angleDifference * 2).scale(-1)
+    }   
+
+    isApproximatelySameTime(u1, u2) {
+        return Math.abs(u1.timestamp - u2.timestamp) < 5000 // TODO: make this 500 again please
+    }
+
+    isSignificantDistance(distance) {
+        return distance > 20
+    }
+
+    constructor() {
+        this.previousPhones = [new PhoneBoxCollection()]
+
+        this._tempLastTouchBuildUpdate = null
+        this.connectionScreenPos = []
+
+        this.startPos = null
+        this.holePos = null
+
+        this.balls = [] // [...Ball]
+        this.activeBallIndex = 0
+
+        this.currPhysicsTime = null
+        this.physicsUpdates = []
+
+        this.physicsTickStep = 30
+    }
+    
+    get activeBall() {
+        return this.balls[this.activeBallIndex % this.balls.length]
+    }
+
+    addPhysicsUpdate(update) {
+        this.physicsUpdates.push(update)
+    }
+
+    updatePhysics() {
+        const currTimestamp = Date.now()
+        let count = 0
+        while (this.currPhysicsTime < currTimestamp) {
+            this.physicsStep(this.currPhysicsTime)
+            count++
+            this.currPhysicsTime += this.physicsTickStep
+
+            if (count > 1000) {
+                // don't do too many at a time to avoid lag
+                break
+            }
+        }
+    }
+
+    isBoardPosInBoard(pos) {
+        return this.phones.containsPoint(pos)
+    }
+
+    applyPhysicsUpdate(update) {
+        if (update.type == updateType.KICK_BALL) {
+            this.activeBall.applyKick(update.data.angle, update.data.strength)
+            this.activeBallIndex++
+        }
     }
 
     physicsStep(timestamp) {
@@ -258,44 +277,48 @@ class MinigolfBoard {
             }
         }
 
-        if (this.isBallMoving()) {
-            this.ballPos.iadd(this.ballVel)
-            this.ballVel.iscale(0.9)
-            if (this.ballVel.length < 0.01) {
-                this.ballVel = new Vector2d(0, 0)
-            }
-        }
-
-        if (!this.isBoardPosInBoard(this.ballPos)) {
-            let closestWall = null
-            let closestPhone = null
-            let smallestDistance = Infinity
-
-            for (let phone of this.phones.phones) {
-                for (let [p1, p2] of phone.walls) {
-                    const distanceToWall = this._distanceToWall(p1, p2, this.ballPos)
-                    if (distanceToWall < smallestDistance) {
-                        closestWall = [p1, p2]
-                        closestPhone = phone
-                        smallestDistance = distanceToWall
-                    }
+        for (let ball of this.balls) {
+            if (ball.isMoving()) {
+                ball.pos.iadd(ball.vel)
+                ball.vel.iscale(0.9)
+                if (ball.vel.length < 0.01) {
+                    ball.vel = new Vector2d(0, 0)
                 }
             }
-
-            const [p1, p2] = closestWall
-            this.ballPos.isub(this.ballVel)
-            this.ballVel = this._reflectAtWall(p1, p2, this.ballVel)
-            this.ballPos.iadd(this.ballVel)
-            
-            if (closestPhone.deviceIndex == gameState.deviceIndex) {
-                navigator.vibrate([100])
+    
+            if (!this.isBoardPosInBoard(ball.pos)) {
+                let closestWall = null
+                let closestPhone = null
+                let smallestDistance = Infinity
+    
+                for (let phone of this.phones.phones) {
+                    for (let [p1, p2] of phone.walls) {
+                        const distanceToWall = this._distanceToWall(p1, p2, ball.pos)
+                        if (distanceToWall < smallestDistance) {
+                            closestWall = [p1, p2]
+                            closestPhone = phone
+                            smallestDistance = distanceToWall
+                        }
+                    }
+                }
+    
+                const [p1, p2] = closestWall
+                ball.pos.isub(ball.vel)
+                ball.vel = this._reflectAtWall(p1, p2, ball.vel)
+                ball.pos.iadd(ball.vel)
+                
+                if (closestPhone.deviceIndex == gameState.deviceIndex) {
+                    if (Math.abs(timestamp - Date.now()) < 50) {
+                        navigator.vibrate([100])
+                    }
+                }
             }
         }
     }
 
     startGame(timestamp) {
-        this.ballPos = this.startPos.copy()
-        this.ballVel = new Vector2d(0, 0)
+        console.log("Starting game", timestamp)
+        this.balls.push(new Ball())
         this.currPhysicsTime = timestamp
     }
 

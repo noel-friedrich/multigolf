@@ -6,12 +6,13 @@ const updateType = {
 
 class Update {
 
-    constructor(type, timestamp, index, data) {
+    constructor(type, timestamp, index, data, uid=null) {
         this.type = type // {} of updateType
         this.timestamp = timestamp // ms since 01.01.1970
         this.index = index // phone index
         this.data = data // generic {} containing data (e.g. finger positions)
                          // data needs to be seriazable!!
+        this.uid = uid ?? Math.random().slice(2)
     }
 
     toObject() {
@@ -19,7 +20,8 @@ class Update {
             type: this.type,
             timestamp: this.timestamp,
             index: this.index,
-            data: this.data
+            data: this.data,
+            uid: this.uid,
         }
     }
 

@@ -73,8 +73,8 @@ class Renderer {
             context.fill()
         }
 
-        if (gameState.board.ballPos) {
-            const ballScreenPos = gameState.board.boardPosToScreenPos(gameState.board.ballPos)
+        for (let ball of gameState.board.balls) {
+            const ballScreenPos = gameState.board.boardPosToScreenPos(ball.pos)
             
             context.beginPath()
             context.fillStyle = "white"
@@ -89,11 +89,11 @@ class Renderer {
     }
 
     renderBallKicking(gameState) {
-        if (!gameState.board.ballPos || !activeTouchPos || (gameState.board.ballVel && gameState.board.ballVel.length > 0)) {
+        if (!gameState.board.activeBall || !activeTouchPos || (gameState.board.ballVel && gameState.board.ballVel.length > 0)) {
             return
         }
 
-        const ballScreenPos = gameState.board.boardPosToScreenPos(gameState.board.ballPos)
+        const ballScreenPos = gameState.board.boardPosToScreenPos(gameState.board.activeBall.pos)
         context.beginPath()
         context.moveTo(ballScreenPos.x, ballScreenPos.y)
 
