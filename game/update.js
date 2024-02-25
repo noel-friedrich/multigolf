@@ -32,7 +32,7 @@ class Update {
     static fromObject(obj) {
         return new Update(
             obj.type, obj.timestamp,
-            obj.index, obj.data
+            obj.index, obj.data, obj.uid
         )
     }
 
