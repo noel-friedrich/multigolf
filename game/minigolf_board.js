@@ -84,6 +84,22 @@ class PhoneBox {
         this.scale(12)
     }
 
+    getMinXY() {
+        return [Math.min(this.path[0].x, this.path[2].x), Math.min(this.path[0].y, this.path[2].y)]
+    }
+
+    getMaxXY() {
+        return [Math.max(this.path[0].x, this.path[2].x), Math.max(this.path[0].y, this.path[2].y)]
+    }
+
+    containsPoint(point) {
+        const minX = Math.min(this.path[0].x, this.path[2].x)
+        const minY = Math.min(this.path[0].y, this.path[2].y)
+        const maxX = Math.max(this.path[0].x, this.path[2].x)
+        const maxY = Math.max(this.path[0].y, this.path[2].y)
+        return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
+    }
+
 }
 
 class PhoneBoxCollection {
@@ -128,6 +144,15 @@ class PhoneBoxCollection {
         }
     }
 
+    containsPoint(point) {
+        for (let phone of this.phones) {
+            if (phone.containsPoint(point)) {
+                return true
+            }
+        }
+        return false
+    }
+
 }
 
 class MinigolfBoard {
@@ -151,11 +176,75 @@ class MinigolfBoard {
         
         this.ballPos = null
         this.ballVel = null
+
+        this.currPhysicsTime = null
+        this.physicsUpdates = []
+
+        this.physicsTickStep = 40
     }
 
-    startGame() {
+    addPhysicsUpdate(update) {
+        this.physicsUpdates.push(update)
+    }
+
+    updatePhysics() {
+        const currTimestamp = Date.now()
+        let count = 0
+        while (this.currPhysicsTime < currTimestamp) {
+            this.physicsStep(this.currPhysicsTime)
+            count++
+            this.currPhysicsTime += this.physicsTickStep
+
+            if (count > 1000) {
+                // don't do too many at a time to avoid lag
+                break
+            }
+        }
+    }
+
+    isBallMoving() {
+        return this.ballVel && this.ballVel.length > 0
+    }
+
+    isBoardPosInBoard(pos) {
+        return this.phones.containsPoint(pos)
+    }
+
+    applyPhysicsUpdate(update) {
+        if (update.type == updateType.KICK_BALL) {
+            if (this.isBallMoving()) {
+                return
+            }
+
+            this.ballVel = Vector2d.fromAngle(update.data.angle).scale(update.data.strength * 200)
+        }
+    }
+
+    physicsStep(timestamp) {
+        if (this.physicsUpdates.length > 0) {
+            if (timestamp > this.physicsUpdates[0].timestamp) {
+                this.applyPhysicsUpdate(this.physicsUpdates.shift())
+            }
+        }
+
+        if (this.isBallMoving()) {
+            this.ballPos.iadd(this.ballVel)
+            this.ballVel.iscale(0.9)
+            if (this.ballVel.length < 0.01) {
+                this.ballVel = new Vector2d(0, 0)
+            }
+        }
+
+        if (!this.isBoardPosInBoard(this.ballPos)) {
+            this.ballVel.iscale(-1)
+            this.ballPos.iadd(this.ballVel)
+        }
+    }
+
+    startGame(timestamp) {
         this.ballPos = this.startPos.copy()
         this.ballVel = new Vector2d(0, 0)
+        this.currPhysicsTime = timestamp
     }
 
     get phones() {
@@ -177,8 +266,16 @@ class MinigolfBoard {
     processUpdates(gameState, updates) {
         for (const update of updates) {
             if (update.type == updateType.PHASE) {
+                if (gameState.phase != update.data.phase && update.data.phase == gamePhase.PLAYING) {
+                    this.startGame(update.timestamp)
+                }
+
                 gameState.phase = update.data.phase
                 MenuGui.update()
+            }
+
+            if (gameState.phase == gamePhase.PLAYING && update.type == updateType.KICK_BALL) {
+                this.addPhysicsUpdate(update)
             }
 
             if (update.type == updateType.TOUCH && ([gamePhase.PLACING_START, gamePhase.PLACING_HOLE].includes(gameState.phase))) {
@@ -196,6 +293,10 @@ class MinigolfBoard {
             }
 
             if (update.type == updateType.TOUCH && gameState.phase == gamePhase.BUILDING) {
+                if (this.phones.length == 0) {
+                    this.previousPhones.push(this.phones.addPhone(PhoneBox.fromUpdate(update)))
+                }
+
                 if (!this._tempLastTouchBuildUpdate) {
                     this._tempLastTouchBuildUpdate = update
                 } else {

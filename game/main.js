@@ -7,6 +7,10 @@ let renderer = null
 
 let touchBlobDesiredPos = null
 let touchBlobPos = null
+let activeTouchPos = null
+
+let ballShootAngle = null
+let ballShootStrength = null
 
 function clampToSide(screenPos) {
     const borderRegion = 100
@@ -42,25 +46,49 @@ canvas.addEventListener("touchstart", event => {
 
     touchBlobDesiredPos = clampToSide(Vector2d.fromTouchEvent(event, canvas))
     touchBlobPos = touchBlobDesiredPos
+    activeTouchPos = Vector2d.fromTouchEvent(event, canvas)
+
+    ballShootAngle = null
+    ballShootStrength = null
 })
 
 canvas.addEventListener("touchmove", event => {
     touchBlobDesiredPos = clampToSide(Vector2d.fromTouchEvent(event, canvas))
+    activeTouchPos = Vector2d.fromTouchEvent(event, canvas)
 })
 
 canvas.addEventListener("touchend", event => {
     if (!gameState || !tempTouchUpdate) return
 
-    tempTouchUpdate.data.touchUp = clampToSide(Vector2d.fromTouchEvent(event, canvas))
-    session.sendUpdate(gameState, tempTouchUpdate)
-    tempTouchUpdate = null
-    
-    touchBlobPos = null
+    if (ballShootAngle && ballShootStrength && !(gameState.board.ballVel && gameState.board.ballVel.length > 0)) {
+        session.sendUpdate(gameState, new Update(
+            updateType.KICK_BALL, Date.now(), gameState.deviceIndex, {
+                strength: ballShootStrength,
+                angle: ballShootAngle
+            }
+        ))
+
+        tempTouchUpdate = null
+        touchBlobPos = null
+        activeTouchPos = null
+    } else {
+        tempTouchUpdate.data.touchUp = clampToSide(Vector2d.fromTouchEvent(event, canvas))
+        session.sendUpdate(gameState, tempTouchUpdate)
+        tempTouchUpdate = null
+        
+        touchBlobPos = null
+        activeTouchPos = null
+    }
 })
 
 function gameLoop() {
     const updates = session.getUpdates()
     gameState.processUpdates(updates)
+
+    if (gameState.phase == gamePhase.PLAYING) {
+        gameState.board.updatePhysics()
+    }
+
     renderer.render(gameState)
 
     window.requestAnimationFrame(gameLoop)
@@ -89,9 +117,9 @@ async function main() {
     gameLoop()
 }
 
-canvas.onclick = () => {
-    if (document.fullscreenElement != canvas) {
-        canvas.requestFullscreen()
+document.body.onclick = () => {
+    if (document.fullscreenElement != document.body) {
+        document.body.requestFullscreen()
     }
 }
 

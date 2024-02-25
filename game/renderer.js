@@ -45,11 +45,11 @@ class Renderer {
             const startScreenPos = gameState.board.boardPosToScreenPos(gameState.board.startPos)
             
             context.beginPath()
-            context.fillStyle = "white"
-            context.arc(startScreenPos.x, startScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+            context.fillStyle = "limegreen"
+            context.arc(startScreenPos.x, startScreenPos.y, this.sizingFactor * 0.03, 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
-            context.lineWidth = 5
+            context.lineWidth = 3
 
             context.fill()   
             context.stroke()
@@ -60,10 +60,52 @@ class Renderer {
             
             context.beginPath()
             context.fillStyle = "black"
-            context.arc(holeScreenPos.x, holeScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+            context.arc(holeScreenPos.x, holeScreenPos.y, this.sizingFactor * 0.06, 0, 2 * Math.PI, false)
             window.holeScreenPos = holeScreenPos
             context.fill()
         }
+
+        if (gameState.board.ballPos) {
+            const ballScreenPos = gameState.board.boardPosToScreenPos(gameState.board.ballPos)
+            
+            context.beginPath()
+            context.fillStyle = "white"
+            context.arc(ballScreenPos.x, ballScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+
+            context.strokeStyle = "black"
+            context.lineWidth = 5
+
+            context.fill()   
+            context.stroke()
+        }
+    }
+
+    renderBallKicking(gameState) {
+        if (!gameState.board.ballPos || !activeTouchPos || (gameState.board.ballVel && gameState.board.ballVel.length > 0)) {
+            return
+        }
+
+        const ballScreenPos = gameState.board.boardPosToScreenPos(gameState.board.ballPos)
+        context.beginPath()
+        context.moveTo(ballScreenPos.x, ballScreenPos.y)
+
+        let dir = activeTouchPos.sub(ballScreenPos)
+        if (dir.length > this.sizingFactor * 0.5) {
+            dir = dir.normalized.scale(this.sizingFactor * 0.5)
+        }
+
+        dir.iscale(0.8 + Math.sin(Date.now() * 0.01) * 0.1)
+
+        ballShootStrength = dir.length / (this.sizingFactor * 0.5)
+        ballShootAngle = dir.angle
+
+        context.strokeStyle = "rgba(0, 0, 0, 0.5)"
+        context.lineWidth = this.sizingFactor * 0.03
+        context.lineCap = "round"
+
+        context.lineTo(ballScreenPos.x + dir.x, ballScreenPos.y + dir.y)
+
+        context.stroke()
     }
 
     render(gameState) {
@@ -78,6 +120,7 @@ class Renderer {
             this.renderBoard(gameState)
         } else if (gameState.phase == gamePhase.PLAYING) {
             this.renderBoard(gameState)
+            this.renderBallKicking(gameState)
         }
     }
 }
