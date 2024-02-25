@@ -8,6 +8,10 @@ class Renderer {
         return Math.min(canvas.width, canvas.height)
     }
 
+    get ballRadius() {
+        return this.sizingFactor * 0.05
+    }
+
     renderBuilding(gameState) {
         context.font = `${this.sizingFactor * 0.4}px monospace`
         context.fillStyle = "white"
@@ -74,7 +78,7 @@ class Renderer {
             
             context.beginPath()
             context.fillStyle = "white"
-            context.arc(ballScreenPos.x, ballScreenPos.y, this.sizingFactor * 0.05, 0, 2 * Math.PI, false)
+            context.arc(ballScreenPos.x, ballScreenPos.y, this.ballRadius, 0, 2 * Math.PI, false)
 
             context.strokeStyle = "black"
             context.lineWidth = 5

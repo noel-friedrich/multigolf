@@ -9,6 +9,15 @@ class PhoneBox {
         this.deviceIndex = deviceIndex
     }
 
+    get walls() {
+        return [
+            [this.path[0], this.path[1]],
+            [this.path[1], this.path[2]],
+            [this.path[2], this.path[3]],
+            [this.path[3], this.path[0]]
+        ]
+    }
+
     copy() {
         return new PhoneBox(
             this.path.map(v => v.copy()),
@@ -147,7 +156,7 @@ class PhoneBoxCollection {
     containsPoint(point) {
         for (let phone of this.phones) {
             if (phone.containsPoint(point)) {
-                return true
+                return phone
             }
         }
         return false
@@ -180,7 +189,7 @@ class MinigolfBoard {
         this.currPhysicsTime = null
         this.physicsUpdates = []
 
-        this.physicsTickStep = 40
+        this.physicsTickStep = 30
     }
 
     addPhysicsUpdate(update) {
@@ -216,8 +225,30 @@ class MinigolfBoard {
                 return
             }
 
-            this.ballVel = Vector2d.fromAngle(update.data.angle).scale(update.data.strength * 200)
+            this.ballVel = Vector2d.fromAngle(update.data.angle).scale(update.data.strength * 100)
         }
+    }
+
+    _distanceToWall(p1, p2, point) {
+        let p2toP1 = p2.sub(p1)
+        let p2toPoint = point.sub(p1)
+        let d = p2toP1.dot(p2toPoint) / (p2toP1.length ** 2)
+
+        if (d < 0) {
+            return p1.distance(point)
+        } else if (d > 1) {
+            return p2.distance(point)
+        } else {
+            let closestPoint = p1.add(p2toP1.scale(d))
+            return closestPoint.distance(point)
+        }
+    }
+
+    _reflectAtWall(p1, p2, dir) {
+        const wallDir = p2.sub(p1)
+        const wallNormal = new Vector2d(-wallDir.y, wallDir.x)
+        const angleDifference = dir.angle - wallNormal.angle
+        return dir.rotate(-angleDifference * 2).scale(-1)
     }
 
     physicsStep(timestamp) {
@@ -229,15 +260,29 @@ class MinigolfBoard {
 
         if (this.isBallMoving()) {
             this.ballPos.iadd(this.ballVel)
-            this.ballVel.iscale(0.9)
+            this.ballVel.iscale(0.94)
             if (this.ballVel.length < 0.01) {
                 this.ballVel = new Vector2d(0, 0)
             }
         }
 
         if (!this.isBoardPosInBoard(this.ballPos)) {
-            this.ballVel.iscale(-1)
-            this.ballPos.iadd(this.ballVel)
+            for (let phone of this.phones.phones) {
+                let closestWall = null
+                let smallestDistance = Infinity
+                for (let [p1, p2] of phone.walls) {
+                    const distanceToWall = this._distanceToWall(p1, p2, this.ballPos)
+                    if (distanceToWall < smallestDistance) {
+                        closestWall = [p1, p2]
+                        smallestDistance = distanceToWall
+                    }
+                }
+
+                const [p1, p2] = closestWall
+                this.ballPos.isub(this.ballVel)
+                this.ballVel = this._reflectAtWall(p1, p2, this.ballVel)
+                this.ballPos.iadd(this.ballVel)
+            }
         }
     }
 
