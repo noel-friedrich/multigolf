@@ -5,6 +5,9 @@ let gameState = null
 let session = null
 let renderer = null
 
+let touchBlobDesiredPos = null
+let touchBlobPos = null
+
 function clampToSide(screenPos) {
     const borderRegion = 100
 
@@ -36,6 +39,13 @@ canvas.addEventListener("touchstart", event => {
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight
         })
+
+    touchBlobDesiredPos = clampToSide(Vector2d.fromTouchEvent(event, canvas))
+    touchBlobPos = touchBlobDesiredPos
+})
+
+canvas.addEventListener("touchmove", event => {
+    touchBlobDesiredPos = clampToSide(Vector2d.fromTouchEvent(event, canvas))
 })
 
 canvas.addEventListener("touchend", event => {
@@ -44,6 +54,8 @@ canvas.addEventListener("touchend", event => {
     tempTouchUpdate.data.touchUp = clampToSide(Vector2d.fromTouchEvent(event, canvas))
     session.sendUpdate(gameState, tempTouchUpdate)
     tempTouchUpdate = null
+    
+    touchBlobPos = null
 })
 
 function gameLoop() {

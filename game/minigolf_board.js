@@ -1,11 +1,23 @@
 class PhoneBox {
 
-    constructor(path, origin, angle, originalScreenSize, scalar) {
+    constructor(path, origin, angle, originalScreenSize, scalar, deviceIndex) {
         this.path = path // [...Vector2d]
         this.origin = origin
         this.angle = angle
         this.originalScreenSize = originalScreenSize
         this.scalar = scalar
+        this.deviceIndex = deviceIndex
+    }
+
+    copy() {
+        return new PhoneBox(
+            this.path.map(v => v.copy()),
+            this.origin.copy(),
+            this.angle,
+            this.originalScreenSize.copy(),
+            this.scalar,
+            this.deviceIndex
+        )
     }
 
     static fromUpdate(update) {
@@ -14,7 +26,7 @@ class PhoneBox {
             new Vector2d(update.data.screenWidth, 0),
             new Vector2d(update.data.screenWidth, update.data.screenHeight),
             new Vector2d(0, update.data.screenHeight),
-        ], new Vector2d(0, 0), 0, new Vector2d(update.screenWidth, update.screenHeight), 1)
+        ], new Vector2d(0, 0), 0, new Vector2d(update.screenWidth, update.screenHeight), 1, update.index)
     }
 
     scale(scalar) {
@@ -75,7 +87,11 @@ class PhoneBoxCollection {
     }
 
     addPhone(phoneBox) {
-        this.phones.push(phoneBox)
+        return new PhoneBoxCollection(this.phones.map(p => p.copy()).concat([phoneBox]))
+    }
+
+    copy() {
+        return new PhoneBoxCollection(this.phones.map(p => p.copy()))
     }
 
     scale(scalar) {
@@ -111,10 +127,14 @@ class MinigolfBoard {
     }
 
     constructor() {
-        this.phones = new PhoneBoxCollection()
-        this.previousFieldPaths = []
+        this.previousPhones = [new PhoneBoxCollection()]
 
         this._tempLastTouchBuildUpdate = null
+        this.connectionScreenPos = []
+    }
+
+    get phones() {
+        return this.previousPhones.slice(-1)[0]
     }
 
     get currIndex() {
@@ -157,9 +177,16 @@ class MinigolfBoard {
                         u2 = temp
                     }
 
-                    if (u1.index != this.currIndex) {
-                        this._tempLastTouchBuildUpdate = update
-                        continue // we ignore both events
+                    if (u1.index < this.currIndex) {
+                        while (this.phones.length > parseInt(u1.index) + 1) {
+                            this.previousPhones.pop()
+                        }
+
+                        this.connectionScreenPos = this.connectionScreenPos.filter(c => {
+                            return !(Math.max(c.targetIndex, c.deviceIndex) > u1.index)
+                        })
+
+                        continue
                     }
 
                     const delta1 = Vector2d.fromObject(u1.data.touchUp).sub(Vector2d.fromObject(u1.data.touchDown))
@@ -169,24 +196,40 @@ class MinigolfBoard {
                     let pp2Point = Vector2d.fromObject(u2.data.touchDown)
 
                     if (this.phones.length == 0) {
-                        this.phones.addPhone(PhoneBox.fromUpdate(u1))
+                        this.previousPhones.push(this.phones.addPhone(PhoneBox.fromUpdate(u1)))
                     }
                     
                     const phoneBox2 = PhoneBox.fromUpdate(u2)
 
+                    const newPhones = this.phones.copy()
+
                     // adjust scaling
-                    this.phones.scale(delta2.length / delta1.length)
+                    newPhones.scale(delta2.length / delta1.length)
                     pp1Point.iscale(delta2.length / delta1.length)
 
                     let angle1 = delta2.angle - delta1.angle
                     angle1 = Math.round(angle1 / (Math.PI / 2)) * (Math.PI / 2)
 
-                    this.phones.rotate(angle1)
+                    newPhones.rotate(angle1)
                     pp1Point.irotate(angle1)
 
-                    this.phones.translate(pp2Point.sub(pp1Point))
+                    newPhones.translate(pp2Point.sub(pp1Point))
 
-                    this.phones.addPhone(phoneBox2)
+                    this.connectionScreenPos.push({
+                        deviceIndex: u1.index,
+                        targetIndex: u2.index,
+                        start: Vector2d.fromObject(u1.data.touchDown),
+                        end: Vector2d.fromObject(u1.data.touchUp),
+                    })
+                    
+                    this.connectionScreenPos.push({
+                        deviceIndex: u2.index,
+                        targetIndex: u1.index,
+                        start: Vector2d.fromObject(u2.data.touchDown),
+                        end: Vector2d.fromObject(u2.data.touchUp),
+                    })
+
+                    this.previousPhones.push(newPhones.addPhone(phoneBox2))
 
                     this._tempLastTouchBuildUpdate = null
                 }
