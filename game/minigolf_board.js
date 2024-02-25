@@ -266,11 +266,11 @@ class MinigolfBoard {
             }
         }
 
-        return
         if (!this.isBoardPosInBoard(this.ballPos)) {
+            let closestWall = null
+            let smallestDistance = Infinity
+            
             for (let phone of this.phones.phones) {
-                let closestWall = null
-                let smallestDistance = Infinity
                 for (let [p1, p2] of phone.walls) {
                     const distanceToWall = this._distanceToWall(p1, p2, this.ballPos)
                     if (distanceToWall < smallestDistance) {
@@ -278,12 +278,12 @@ class MinigolfBoard {
                         smallestDistance = distanceToWall
                     }
                 }
-
-                const [p1, p2] = closestWall
-                this.ballPos.isub(this.ballVel)
-                this.ballVel = this._reflectAtWall(p1, p2, this.ballVel)
-                this.ballPos.iadd(this.ballVel)
             }
+
+            const [p1, p2] = closestWall
+            this.ballPos.isub(this.ballVel)
+            this.ballVel = this._reflectAtWall(p1, p2, this.ballVel)
+            this.ballPos.iadd(this.ballVel)
         }
     }
 
