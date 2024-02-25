@@ -1,6 +1,10 @@
 class Renderer {
 
     get sizingFactor() {
+        if (gameState.board.phones.length > 0 && gameState.board.phones.phones[gameState.deviceIndex]) {
+            return gameState.board.phones.phones[gameState.deviceIndex].scalar * 300
+        }
+
         return Math.min(canvas.width, canvas.height)
     }
 
