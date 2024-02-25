@@ -190,6 +190,8 @@ class MinigolfBoard {
         this.physicsUpdates = []
 
         this.physicsTickStep = 30
+
+        this.accelerometer = new AccelReader()
     }
 
     addPhysicsUpdate(update) {

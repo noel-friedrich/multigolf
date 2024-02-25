@@ -1,7 +1,8 @@
 const updateType = {
     TOUCH: "touch",
     PHASE: "phase",
-    KICK_BALL: "kick_ball"
+    KICK_BALL: "kick_ball",
+    SLOPE: "slope"
 }
 
 class Update {
