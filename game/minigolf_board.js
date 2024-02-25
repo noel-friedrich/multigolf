@@ -170,7 +170,7 @@ class Ball {
         this.pos = new Vector2d(0, 0)
         this.vel = new Vector2d(0, 0)
 
-        this.dampening = 0.9
+        this.dampening = 0.95
         this.kickFactor = 100
     }
 
