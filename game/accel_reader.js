@@ -1,7 +1,7 @@
 
 class AccelData {
     constructor(x,y,z, timeStamp) {
-        this.vector = Vector3d(x,y,z)
+        this.vector = new Vector3d(x,y,z)
         this._timeStamp = timeStamp
     }
 
@@ -27,10 +27,17 @@ class AccelData {
 class AccelReader {
 
     constructor() {
-        this.accel = new Accelerometer({ frequency: 60 })
-        this.lastAccelData = AccelData.fromAccelerometer(this.accel)
+        this.isEnabled = false
+        this.lastAccelData = null
+        try {
+            this.accel = new Accelerometer({ frequency: 60 })
+            this.accel.addEventListener("reading", this.handleReading)
+            this.lastAccelData = AccelData.fromAccelerometer(this.accel)
+            this.isEnabled = true
+        } catch (_) {
+            this.accel = null
+        }
         this.changed = false
-        this.accel.addEventListener("reading", this.handleReading)
     }
 
     get hasChanged() {
@@ -38,6 +45,7 @@ class AccelReader {
     }
 
     handleReading() {
+        if (!this.isEnabled) return
         const currTime = Date.now()
         if (currTime - this.lastAccelData.timeStamp() < 500) {
             return
@@ -62,6 +70,7 @@ class AccelReader {
     }
 
     didChange(accelDataA, accelDataB) {
+        if(!this.isEnabled) return
         const difference = accelDataA.similarity(accelDataB) * 100 // is percent (100 is same)
         return difference < 50 //TODO: tweak this number
     }
