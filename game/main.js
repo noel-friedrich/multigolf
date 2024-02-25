@@ -32,6 +32,22 @@ function clampToSide(screenPos) {
     return newPos
 }
 
+canvas.addEventListener("click", event => {
+    if (!gameState.board.startPos) {
+        return
+    }
+
+    const screenPos = Vector2d.fromTouchEvent(event, canvas)
+    const startScreenPos = gameState.board.boardPosToScreenPos(gameState.board.startPos)
+    if (screenPos.distance(startScreenPos) < 30) {
+        session.sendUpdate(gameState, new Update(
+            updateType.SPAWN_BALL, Date.now(), gameState.deviceIndex, {
+                color: `hsl(${Math.floor(Math.random() * 360)}deg, 100%, 50%)`
+            }
+        ))
+    }
+})
+
 let tempTouchUpdate = null
 canvas.addEventListener("touchstart", event => {
     if (!gameState) return

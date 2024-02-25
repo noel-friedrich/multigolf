@@ -169,6 +169,7 @@ class Ball {
     constructor() {
         this.pos = new Vector2d(0, 0)
         this.vel = new Vector2d(0, 0)
+        this.color = "white"
 
         this.dampening = 0.95
         this.kickFactor = 100
@@ -330,6 +331,15 @@ class MinigolfBoard {
         this.currPhysicsTime = timestamp
     }
 
+    spawnBall(update) {
+        const ball = new Ball()
+        this.balls.push(ball)
+        if (this.startPos) {
+            ball.pos = this.startPos.copy()
+            ball.color = update.data.color
+        }
+    }
+
     get phones() {
         return this.previousPhones.slice(-1)[0]
     }
@@ -355,6 +365,10 @@ class MinigolfBoard {
 
                 gameState.phase = update.data.phase
                 MenuGui.update()
+            }
+
+            if (gameState.phase == gamePhase.PLAYING && update.type == updateType.SPAWN_BALL) {
+                this.spawnBall(update)
             }
 
             if (gameState.phase == gamePhase.PLAYING && update.type == updateType.KICK_BALL) {
