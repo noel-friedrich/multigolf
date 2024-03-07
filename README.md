@@ -24,7 +24,7 @@ The website is split into three parts:
     - This is where the game is actually being played. You'll be playing the configured minigame course and the scores will decide who the best multigolfer is.
 
 ## Authors
-This project is being developed by a team of six in the [HackTrinity](https://hacktrinity.com/) hackathon at Trinity College Dublin.
+This project was developed by a team of four in the [HackTrinity](https://hacktrinity.com/) hackathon from the 23.03.2024 to the 25.03.2024 at Trinity College Dublin.
 
 ## Status
 This projects is currently in development.
